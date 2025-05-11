@@ -5,12 +5,11 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class Schedule {
+public class User {
     private int id;
-    private String task;
-    private String author;
-    private String password;
-    private int userId;
+    private String email;
+    private String name;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 }
