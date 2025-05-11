@@ -1,3 +1,5 @@
+# 일정 관리 앱!
+
 ## 📘 API 목록
 
 | 기능           | 메서드 | URL                                      | Request 필드            | Response 필드              | 상태    |
@@ -237,3 +239,6 @@
 ```
 
 </details>
+
+
+![Schedule.png](/Schedule.png)
