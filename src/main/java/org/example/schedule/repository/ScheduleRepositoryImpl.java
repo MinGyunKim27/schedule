@@ -60,6 +60,17 @@ public class ScheduleRepositoryImpl implements ScheduleRepository{
         return result.stream().findAny();
     }
 
+    @Override
+    public int updateSchedule(Long id, String task, String userName,String password) {
+        return jdbcTemplate.update("update schedule.schedule set task = ?, user_name = ? where password = ? and id = ?",task,userName,password,id);
+    }
+
+    @Override
+    public int deleteSchedule(Long id) {
+        return jdbcTemplate.update("delete from schedule.schedule where id = ?" , id);
+
+    }
+
     private RowMapper<ScheduleResponseDto> scheduleResponseDtoRowMapper(){
         return new RowMapper<ScheduleResponseDto>() {
             @Override
@@ -89,6 +100,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository{
                         rs.getString("task"),
                         rs.getString("user_name"),
                         rs.getString("password"),
+                        //Timestamp 자료 형 LocalDateTime으로 변환
                         Optional.ofNullable(rs.getTimestamp("created_at"))
                                 .map(Timestamp::toLocalDateTime)
                                 .orElse(null),

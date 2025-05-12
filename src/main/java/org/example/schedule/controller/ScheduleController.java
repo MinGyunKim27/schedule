@@ -30,4 +30,16 @@ public class ScheduleController {
     public ScheduleResponseDto findScheduleById(@PathVariable Long id){
         return scheduleService.findScheduleById(id);
     }
+
+    @DeleteMapping("/{id}")
+    public int deleteSchedule(@PathVariable Long id){
+        return scheduleService.deleteSchedule(id);
+    }
+
+    @PatchMapping("/{id}")
+    public ScheduleResponseDto updateSchedule(
+            @PathVariable Long id,
+            @RequestBody ScheduleRequestDto dto){
+        return scheduleService.updateSchedule(id,dto.getTask(),dto.getUserName(),dto.getPassword());
+    }
 }
