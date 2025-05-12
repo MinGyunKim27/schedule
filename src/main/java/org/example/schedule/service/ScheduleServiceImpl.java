@@ -7,6 +7,8 @@ import org.example.schedule.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ScheduleServiceImpl implements ScheduleService{
@@ -26,12 +28,15 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedule() {
-        return List.of();
+    public List<ScheduleResponseDto> findAllSchedules() {
+        return scheduleRepository.findAllSchedules();
     }
 
     @Override
     public ScheduleResponseDto findScheduleById(Long id) {
-        return null;
+        Optional<Schedule> scheduleOpt = scheduleRepository.findScheduleById(id);
+        Schedule schedule = scheduleOpt.orElse(null);
+
+        return new ScheduleResponseDto(Objects.requireNonNull(schedule));
     }
 }

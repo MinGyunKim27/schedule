@@ -3,10 +3,9 @@ package org.example.schedule.controller;
 import org.example.schedule.dto.ScheduleRequestDto;
 import org.example.schedule.dto.ScheduleResponseDto;
 import org.example.schedule.service.ScheduleService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/schedules")
@@ -20,5 +19,15 @@ public class ScheduleController {
     @PostMapping
     public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto dto){
         return scheduleService.saveSchedule(dto);
+    }
+
+    @GetMapping
+    public List<ScheduleResponseDto> findAllSchedules(){
+        return scheduleService.findAllSchedules();
+    }
+
+    @GetMapping("/{id}")
+    public ScheduleResponseDto findScheduleById(@PathVariable Long id){
+        return scheduleService.findScheduleById(id);
     }
 }

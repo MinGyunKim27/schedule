@@ -1,16 +1,20 @@
 package org.example.schedule.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@AllArgsConstructor
 public class Schedule {
+
+    @Setter
     private Long id;
     private String task;
     private String userName;
     private String password;
-    private int userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

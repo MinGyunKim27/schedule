@@ -10,6 +10,6 @@ import java.util.List;
 @Service
 public interface ScheduleService {
     ScheduleResponseDto saveSchedule(ScheduleRequestDto scheduleRequestDto);
-    List<ScheduleResponseDto> findAllSchedule();
+    List<ScheduleResponseDto> findAllSchedules();
     ScheduleResponseDto findScheduleById(Long id);
 }
