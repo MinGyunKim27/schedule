@@ -6,11 +6,17 @@ import java.time.LocalDateTime;
 
 @Getter
 public class Schedule {
-    private int id;
+    private Long id;
     private String task;
-    private String author;
+    private String userName;
     private String password;
     private int userId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public Schedule(String task,String userName,String password){
+        this.task = task;
+        this.userName = userName;
+        this.password = password;
+    }
 }
