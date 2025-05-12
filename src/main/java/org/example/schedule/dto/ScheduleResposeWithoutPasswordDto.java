@@ -1,30 +1,23 @@
 package org.example.schedule.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.example.schedule.entity.Schedule;
 
 import java.time.LocalDate;
 
-@Getter
-@AllArgsConstructor
-public class ScheduleResponseDto {
+public class ScheduleResposeWithoutPasswordDto {
     private Long id;
     private String taskTitle;
     private String taskContents;
-    private String userName;
-    private String password;
+    private Long userId;
     private LocalDate createdAt;
     private LocalDate updatedAt;
 
-    public ScheduleResponseDto(Schedule schedule, String name) {
+    public ScheduleResposeWithoutPasswordDto(Schedule schedule){
         this.id = schedule.getId();
         this.taskTitle = schedule.getTaskTitle();
         this.taskContents = schedule.getTaskContents();
-        this.userName = name;
-        this.password = schedule.getPassword();
+        this.userId = schedule.getUserId();
         this.createdAt = schedule.getCreatedAt();
         this.updatedAt = schedule.getUpdatedAt();
     }
-
 }

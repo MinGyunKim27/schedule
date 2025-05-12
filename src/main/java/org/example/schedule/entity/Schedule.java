@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @AllArgsConstructor
@@ -12,15 +12,17 @@ public class Schedule {
 
     @Setter
     private Long id;
-    private String task;
-    private String userName;
+    private String taskTitle;
+    private String taskContents;
+    private Long userId;
     private String password;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
 
-    public Schedule(String task,String userName,String password){
-        this.task = task;
-        this.userName = userName;
+    public Schedule(String taskTitle,String taskContents,Long userId,String password){
+        this.taskTitle = taskTitle;
+        this.taskContents = taskContents;
+        this.userId = userId;
         this.password = password;
     }
 }

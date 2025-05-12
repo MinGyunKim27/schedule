@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class ScheduleServiceImpl implements ScheduleService{
 
     @Override
     public ScheduleResponseDto saveSchedule(ScheduleRequestDto dto) {
-        Schedule schedule = new Schedule(dto.getTask(), dto.getUserName(), dto.getPassword());
+        Schedule schedule = new Schedule(dto.getTaskTitle(),dto.getTaskContents(), dto.getUserId(), dto.getPassword());
 
         return scheduleRepository.saveSchedule(schedule);
     }
@@ -39,7 +40,9 @@ public class ScheduleServiceImpl implements ScheduleService{
         Optional<Schedule> scheduleOpt = scheduleRepository.findScheduleById(id);
         Schedule schedule = scheduleOpt.orElse(null);
 
-        return new ScheduleResponseDto(Objects.requireNonNull(schedule));
+        String userName = scheduleRepository.findUserNameById(schedule.getUserId());
+
+        return new ScheduleResponseDto(Objects.requireNonNull(schedule),userName);
     }
 
     @Override
@@ -48,19 +51,25 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public ScheduleResponseDto updateSchedule(Long id, String task, String userName, String password) {
-        if (task == null || userName == null || password == null){
+    public List<ScheduleResponseDto> findAllSchedulesByConditions(String name, LocalDate updateDate) {
+        return scheduleRepository.findSchedulesByConditions(name, updateDate);
+    }
+
+    @Override
+    public ScheduleResponseDto updateSchedule(Long id, String taskTitle,String taskContents, Long userId, String password) {
+        if (taskTitle == null || taskContents == null || userId == null || password == null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Task, userName and password is required.");
         }
-        int updateRow = scheduleRepository.updateSchedule(id,task,userName,password);
+        int updateRow = scheduleRepository.updateSchedule(id,taskTitle,taskContents,userId,password);
 
         if (updateRow == 0){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exits id = " + id);
         }
 
         Schedule schedule = scheduleRepository.findScheduleById(id).orElse(null);
+        String userName = scheduleRepository.findUserNameById(schedule.getUserId());
 
-        return new ScheduleResponseDto(schedule);
+        return new ScheduleResponseDto(schedule,userName);
     }
 
 }

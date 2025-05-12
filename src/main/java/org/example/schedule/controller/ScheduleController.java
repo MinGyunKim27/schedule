@@ -3,8 +3,10 @@ package org.example.schedule.controller;
 import org.example.schedule.dto.ScheduleRequestDto;
 import org.example.schedule.dto.ScheduleResponseDto;
 import org.example.schedule.service.ScheduleService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -26,6 +28,16 @@ public class ScheduleController {
         return scheduleService.findAllSchedules();
     }
 
+    @GetMapping("/conditions")
+    public List<ScheduleResponseDto> findAllSchedulesByConditions(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate updatedDate
+    ){
+        return scheduleService.findAllSchedulesByConditions(name,updatedDate);
+    }
+
+
     @GetMapping("/{id}")
     public ScheduleResponseDto findScheduleById(@PathVariable Long id){
         return scheduleService.findScheduleById(id);
@@ -40,6 +52,8 @@ public class ScheduleController {
     public ScheduleResponseDto updateSchedule(
             @PathVariable Long id,
             @RequestBody ScheduleRequestDto dto){
-        return scheduleService.updateSchedule(id,dto.getTask(),dto.getUserName(),dto.getPassword());
+        return scheduleService.updateSchedule(id,dto.getTaskTitle(),dto.getTaskContents(),dto.getUserId(),dto.getPassword());
     }
+
+
 }
