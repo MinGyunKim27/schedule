@@ -18,4 +18,7 @@ public interface UserRepository {
 
     int deleteUser(Long id);
 
+    String findUserNameById(Long userId);
+
+
 }

@@ -1,5 +1,6 @@
 package org.example.schedule.controller;
 
+import jakarta.validation.Valid;
 import org.example.schedule.dto.ScheduleRequestDto;
 import org.example.schedule.dto.ScheduleResponseDto;
 import org.example.schedule.service.ScheduleService;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/schedules")
+@Valid
 public class ScheduleController {
     private final ScheduleService scheduleService;
 
@@ -19,22 +21,19 @@ public class ScheduleController {
     }
 
     @PostMapping
-    public ScheduleResponseDto createSchedule(@RequestBody ScheduleRequestDto dto){
+    public ScheduleResponseDto createSchedule(@RequestBody @Valid ScheduleRequestDto dto){
         return scheduleService.saveSchedule(dto);
     }
 
     @GetMapping
-    public List<ScheduleResponseDto> findAllSchedules(){
-        return scheduleService.findAllSchedules();
-    }
-
-    @GetMapping("/conditions")
     public List<ScheduleResponseDto> findAllSchedulesByConditions(
             @RequestParam(required = false) String name,
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate updatedDate
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate updatedDate,
+            @RequestParam(defaultValue = "0") Long pageNo,
+            @RequestParam(defaultValue = "10") Long pageSize
     ){
-        return scheduleService.findAllSchedulesByConditions(name,updatedDate);
+        return scheduleService.findAllSchedulesByConditions(name,updatedDate,pageNo,pageSize);
     }
 
 
@@ -51,7 +50,7 @@ public class ScheduleController {
     @PatchMapping("/{id}")
     public ScheduleResponseDto updateSchedule(
             @PathVariable Long id,
-            @RequestBody ScheduleRequestDto dto){
+            @RequestBody @Valid ScheduleRequestDto dto){
         return scheduleService.updateSchedule(id,dto.getTaskTitle(),dto.getTaskContents(),dto.getUserId(),dto.getPassword());
     }
 

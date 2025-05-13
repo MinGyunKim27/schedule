@@ -20,8 +20,11 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ScheduleRepositoryImpl(JdbcTemplate jdbcTemplate) {
+    private final UserRepository userRepository; // ← 추가!
+
+    public ScheduleRepositoryImpl(JdbcTemplate jdbcTemplate, UserRepository userRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
         Number key = jdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
-        String userName = findUserNameById(schedule.getUserId());
+        String userName = userRepository.findUserNameById(schedule.getUserId());
 
         return new ScheduleResponseDto(
                 key.longValue(),
@@ -56,7 +59,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public List<ScheduleResponseDto> findSchedulesByConditions(String name, LocalDate updatedDate) {
+    public List<ScheduleResponseDto> findSchedulesByConditions(String name, LocalDate updatedDate,Long pageNo,Long pageSize) {
         StringBuilder sql = new StringBuilder("""
             SELECT s.id, s.taskTitle, s.taskContents, s.password,
                    s.created_at, s.updated_at,
@@ -72,7 +75,6 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
             conditions.add("u.name = ?");
             params.add(name);
         }
-
         if (updatedDate != null) {
             conditions.add("DATE(s.updated_at) = ?");
             params.add(Date.valueOf(updatedDate));
@@ -84,20 +86,15 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
 
         sql.append(" ORDER BY s.updated_at DESC");
 
+        if (pageNo != null && pageSize != null) {
+            sql.append(" LIMIT ? OFFSET ?");
+            params.add(pageSize.intValue());
+            params.add((int)(pageNo * pageSize));
+        }
+
         return jdbcTemplate.query(sql.toString(), params.toArray(), scheduleResponseDtoRowMapper());
     }
 
-    @Override
-    public List<ScheduleResponseDto> findAllSchedules() {
-        return jdbcTemplate.query("""
-            SELECT s.id, s.taskTitle, s.taskContents, s.password,
-                   s.created_at, s.updated_at,
-                   u.name AS user_name
-            FROM schedule s
-            JOIN user u ON s.userId = u.id
-            ORDER BY s.updated_at DESC
-        """, scheduleResponseDtoRowMapper());
-    }
 
     @Override
     public Optional<Schedule> findScheduleById(Long id) {
@@ -124,16 +121,9 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         return jdbcTemplate.update("DELETE FROM schedule WHERE id = ?", id);
     }
 
-    @Override
-    public String findUserNameById(Long userId) {
-        return jdbcTemplate.queryForObject(
-                "SELECT name FROM user WHERE id = ?",
-                String.class,
-                userId
-        );
-    }
 
-    // ✅ Response DTO 매핑
+
+    // Response DTO 매핑
     private RowMapper<ScheduleResponseDto> scheduleResponseDtoRowMapper() {
         return (rs, rowNum) -> new ScheduleResponseDto(
                 rs.getLong("id"),
@@ -146,7 +136,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         );
     }
 
-    // ✅ Entity 매핑
+    // Entity 매핑
     private RowMapper<Schedule> scheduleEntityRowMapper() {
         return (rs, rowNum) -> new Schedule(
                 rs.getLong("id"),
@@ -159,7 +149,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
         );
     }
 
-    // ✅ LocalDate 변환 헬퍼
+    // LocalDate 변환 헬퍼
     private LocalDate toLocalDate(Timestamp timestamp) {
         return Optional.ofNullable(timestamp)
                 .map(Timestamp::toLocalDateTime)

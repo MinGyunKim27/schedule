@@ -69,6 +69,16 @@ public class UserRepositoryImpl implements UserRepository{
         return jdbcTemplate.update("delete from schedule.user where id = ?",id);
     }
 
+
+    @Override
+    public String findUserNameById(Long userId) {
+        return jdbcTemplate.queryForObject(
+                "SELECT name FROM user WHERE id = ?",
+                String.class,
+                userId
+        );
+    }
+
     private RowMapper<UserResponseDto> userResponseDtoRowMapper(){
         return new RowMapper<UserResponseDto>() {
             @Override

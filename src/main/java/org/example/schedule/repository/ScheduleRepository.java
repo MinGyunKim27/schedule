@@ -13,16 +13,12 @@ public interface ScheduleRepository {
 
     ScheduleResponseDto saveSchedule(Schedule schedule);
 
-    List<ScheduleResponseDto> findSchedulesByConditions(String name, LocalDate updateDate);
-
-    List<ScheduleResponseDto> findAllSchedules();
+    List<ScheduleResponseDto> findSchedulesByConditions(String name, LocalDate updateDate,Long pageNo,Long pageSize);
 
     Optional<Schedule> findScheduleById(Long id);
 
     int updateSchedule(Long id, String taskTitle,String taskContents, Long userId,String password);
 
     int deleteSchedule(Long id);
-
-    String findUserNameById(Long userId);
 
 }

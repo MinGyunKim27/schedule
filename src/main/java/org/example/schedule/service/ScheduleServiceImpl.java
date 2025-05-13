@@ -4,6 +4,7 @@ import org.example.schedule.dto.ScheduleRequestDto;
 import org.example.schedule.dto.ScheduleResponseDto;
 import org.example.schedule.entity.Schedule;
 import org.example.schedule.repository.ScheduleRepository;
+import org.example.schedule.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,9 +18,11 @@ import java.util.Optional;
 public class ScheduleServiceImpl implements ScheduleService{
 
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository; // ← 추가!
 
-    public ScheduleServiceImpl(ScheduleRepository scheduleRepository) {
+    public ScheduleServiceImpl(ScheduleRepository scheduleRepository, UserRepository userRepository) {
         this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -31,16 +34,11 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedules() {
-        return scheduleRepository.findAllSchedules();
-    }
-
-    @Override
     public ScheduleResponseDto findScheduleById(Long id) {
         Optional<Schedule> scheduleOpt = scheduleRepository.findScheduleById(id);
         Schedule schedule = scheduleOpt.orElse(null);
 
-        String userName = scheduleRepository.findUserNameById(schedule.getUserId());
+        String userName = userRepository.findUserNameById(schedule.getUserId());
 
         return new ScheduleResponseDto(Objects.requireNonNull(schedule),userName);
     }
@@ -51,8 +49,8 @@ public class ScheduleServiceImpl implements ScheduleService{
     }
 
     @Override
-    public List<ScheduleResponseDto> findAllSchedulesByConditions(String name, LocalDate updateDate) {
-        return scheduleRepository.findSchedulesByConditions(name, updateDate);
+    public List<ScheduleResponseDto> findAllSchedulesByConditions(String name, LocalDate updateDate,Long pageNo,Long pageSize) {
+        return scheduleRepository.findSchedulesByConditions(name, updateDate,pageNo,pageSize);
     }
 
     @Override
@@ -67,7 +65,7 @@ public class ScheduleServiceImpl implements ScheduleService{
         }
 
         Schedule schedule = scheduleRepository.findScheduleById(id).orElse(null);
-        String userName = scheduleRepository.findUserNameById(schedule.getUserId());
+        String userName = userRepository.findUserNameById(schedule.getUserId());
 
         return new ScheduleResponseDto(schedule,userName);
     }
