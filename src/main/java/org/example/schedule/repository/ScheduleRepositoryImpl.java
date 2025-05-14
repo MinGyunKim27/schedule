@@ -107,13 +107,19 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public int updateSchedule(Long id, String taskTitle, String taskContents, Long userId, String password) {
+    public int updateSchedule(Long id, String taskTitle, String taskContents, Long userId) {
         LocalDateTime now = LocalDateTime.now();
         return jdbcTemplate.update("""
             UPDATE schedule
             SET taskTitle = ?, taskContents = ?, userId = ?, updated_at = ?
-            WHERE password = ? AND id = ?
-        """, taskTitle, taskContents, userId, now, password, id);
+            WHERE id = ?
+        """, taskTitle, taskContents, userId, now, id);
+    }
+
+    public boolean isPasswordMatch(Long scheduleId, String password) {
+        String sql = "SELECT COUNT(*) FROM schedule WHERE id = ? AND password = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, scheduleId, password);
+        return count != null && count > 0;
     }
 
     @Override

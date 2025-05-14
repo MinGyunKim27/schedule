@@ -5,6 +5,7 @@ import org.example.schedule.dto.UserResponseDto;
 import org.example.schedule.entity.User;
 import org.example.schedule.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class UserServiceImpl implements UserService{
     public User findUserById(Long id) {
         return userRepository.findUserById(id).orElse(null);
     }
-
+    @Transactional
     @Override
     public int updateUser(Long id, String email, String name) {
         return userRepository.updateUser(id,email,name);

@@ -1,5 +1,6 @@
 package org.example.schedule.controller;
 
+import jakarta.validation.Valid;
 import org.example.schedule.dto.UserRequestDto;
 import org.example.schedule.dto.UserResponseDto;
 import org.example.schedule.entity.User;
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserResponseDto createUser(@RequestBody UserRequestDto dto){
+    public UserResponseDto createUser(@RequestBody @Valid UserRequestDto dto){
         return userService.saveUser(dto);
     }
 
